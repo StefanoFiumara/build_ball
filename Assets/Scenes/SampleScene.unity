@@ -218,6 +218,7 @@ GameObject:
   - component: {fileID: 1291282042}
   - component: {fileID: 1291282041}
   - component: {fileID: 1291282040}
+  - component: {fileID: 1291282043}
   m_Layer: 0
   m_Name: Test Player
   m_TagString: Untagged
@@ -237,9 +238,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cd23905f1eebcf429a791cdea587c15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BallPrefab: {fileID: 4145933735201735826, guid: ab51169f37165214c9432789528a77c9, type: 3}
-  Velocity: 10
-  ShotStrength: 15
+  ballPrefab: {fileID: 4145933735201735826, guid: ab51169f37165214c9432789528a77c9, type: 3}
+  velocity: 4
+  rigidbody2D: {fileID: 1291282043}
+  shotStrength: 4
 --- !u!212 &1291282041
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -300,10 +302,31 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1291282039}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.029365271, y: -1.2930207, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &1291282043
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291282039}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 2
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
