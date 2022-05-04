@@ -4,11 +4,17 @@ namespace Player
 {
     public class CharacterController : MonoBehaviour
     {
-        [SerializeField] private GameObject ballPrefab;
-        [SerializeField] private float velocity;
+        [SerializeField] private GameObject BallPrefab;
+        [SerializeField] private float Velocity;
 
         private Vector2 _direction;
+        private CharacterStats _stats;
 
+        public void Start()
+        {
+            _stats = GetComponentInParent<CharacterStats>();
+        }
+        
         public float shotStrength;
 
         public void Update()
@@ -36,14 +42,19 @@ namespace Player
 
             if (Input.GetMouseButtonDown(0)) //Left Click
             {
-                var ball = Instantiate(ballPrefab, transform.position, Quaternion.identity);
+                var ball = Instantiate(BallPrefab, transform.position, Quaternion.identity);
 
                 var movement = ball.GetComponent<BallMovement>();
                 movement.Velocity = shotStrength;
                 // TODO: adjust ball direction based on character's facing direction?
             }
+            
+            if (Input.GetKey((KeyCode.LeftShift)))
+            {
+                
+            }
 
-            transform.position += (velocity * Time.deltaTime * new Vector3(_direction.x, _direction.y, 0f));
+            transform.position += (Velocity * Time.deltaTime * new Vector3(_direction.x, _direction.y, 0f));
         }
     }
 }
