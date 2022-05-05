@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace Player
 {
-    public class PlayerStats : ScriptableObject
+    public class PlayerStats : MonoBehaviour
     {
         [SerializeField] public int HealthPoints;
         [SerializeField] public int MaxHealthPoints;
         [SerializeField] public int StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
-        
+
         public void Start()
         {
             Actions.DashExecuted += StaminaPointLoss;
@@ -54,7 +54,7 @@ namespace Player
 
         /**
          * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         * TODO: Consider removing or using "EDITOR" settings on method in the future
          */
         public void LimitMaxHealthPoints()
         {
@@ -65,7 +65,7 @@ namespace Player
 
         /**
          * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         * TODO: Consider removing or using "EDITOR" settings on method in the future
          */
         public void LimitMaxStaminaPoints()
         {

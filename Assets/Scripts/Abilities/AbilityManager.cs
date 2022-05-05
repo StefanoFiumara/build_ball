@@ -6,7 +6,6 @@ namespace Abilities
 {
     public class AbilityManager : MonoBehaviour
     {
-        [SerializeField] public Ability primaryAbility;
         [SerializeField] public Dash dash;
 
         public void Start()
@@ -16,7 +15,8 @@ namespace Abilities
 
         private void DashTriggered(PlayerStats stats)
         {
-            if (stats.CanDash()) {
+            if (stats.CanDash())
+            {
                 dash.Trigger();
             }
         }
