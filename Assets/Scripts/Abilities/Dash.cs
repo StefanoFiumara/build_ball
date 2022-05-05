@@ -8,7 +8,7 @@ namespace Abilities
     public class Dash : Ability
     {
         // Minimum amount of time between Dashes  
-        private bool _isResetDashRefreshTimer = false;
+        private bool _isResetDashRefreshTimer;
 
         [SerializeField] public float DashVelocity;
         public void Start()
@@ -40,6 +40,7 @@ namespace Abilities
 
         private IEnumerator DashDuration()
         {
+            Debug.Log("DashDuration");
             float totalTime = 0f;
             while (totalTime <= DURATION_IN_SECONDS) {
                 totalTime += Time.deltaTime;
@@ -51,6 +52,7 @@ namespace Abilities
 
         private IEnumerator RefreshDash()
         {
+            Debug.Log("RefreshDash");
             float totalTime = 0f;
 
             while (totalTime <= COOLDOWN_IN_SECONDS) {
@@ -64,8 +66,7 @@ namespace Abilities
             }
 
             Actions.RefreshDashComplete?.Invoke();
-
-            /*TODO: REVISIT*/
+            
             StartCoroutine(RefreshDash());
         }
 

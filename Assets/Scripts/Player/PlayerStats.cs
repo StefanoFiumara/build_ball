@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class PlayerStats : MonoBehaviour
+    public class PlayerStats : ScriptableObject
     {
         [SerializeField] public int HealthPoints;
         [SerializeField] public int MaxHealthPoints;

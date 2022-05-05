@@ -6,6 +6,7 @@ namespace Abilities
 {
     public class AbilityManager : MonoBehaviour
     {
+        [SerializeField] public Ability primaryAbility;
         [SerializeField] public Dash dash;
 
         public void Start()

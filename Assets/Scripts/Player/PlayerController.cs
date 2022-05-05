@@ -15,12 +15,6 @@ namespace Player
         [SerializeField] private AbilityManager _abilityManager;
         public float shotStrength;
 
-        public void Start()
-        {
-            _stats = GetComponentInParent<PlayerStats>();
-            _abilityManager = GetComponentInParent<AbilityManager>();
-        }
-
         public void Update()
         {
             Vector2 movementDirection = GetMovementDirection();

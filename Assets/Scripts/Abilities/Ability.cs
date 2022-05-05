@@ -16,5 +16,7 @@ namespace Abilities
         // Time length of Ability
         [SerializeField] protected float DURATION_IN_SECONDS;
 
+        
+        
     }
 }
