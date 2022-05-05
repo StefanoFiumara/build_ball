@@ -4,42 +4,74 @@ namespace Player
 {
     public class CharacterStats : MonoBehaviour
     {
-        public int healthPoints;
-        public int maxHealthPoints;
+        [SerializeField] public int HealthPoints;
+        [SerializeField] public int MaxHealthPoints;
+        [SerializeField] public int StaminaPoints;
+        [SerializeField] public int MaxStaminaPoints;
 
-        public int staminaPoints;
-        public int maxStaminaPoints;
+        [SerializeField] public float DashDuration;
+        [SerializeField] public float DashVelocity;
 
         public void HealthPointLoss()
         {
-            healthPoints--;
+            HealthPoints--;
         }
 
         public void HealthPointGain()
         {
-            healthPoints++;
+            HealthPoints++;
         }
-        
+
         public void StaminaPointLoss()
         {
-            healthPoints--;
+            StaminaPoints--;
         }
 
         public void StaminaPointGain()
         {
-            healthPoints++;
+            StaminaPoints++;
         }
 
 
         public void ResetHealth()
         {
-            healthPoints = maxHealthPoints;
+            HealthPoints = MaxHealthPoints;
         }
-        
+
         public void ResetStamina()
         {
-            staminaPoints = maxStaminaPoints;
+            StaminaPoints = MaxStaminaPoints;
         }
+
+        public bool CanDash()
+        {
+            return StaminaPoints > 0;
+        }
+
+        /**
+         * Mostly applicable when modifying values in the editor for testing.
+         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         */
+        public void LimitMaxHealthPoints()
+        {
+            if (HealthPoints > MaxHealthPoints)
+            {
+                HealthPoints = MaxHealthPoints;
+            }
+        }
+        
+        /**
+         * Mostly applicable when modifying values in the editor for testing.
+         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         */
+        public void LimitMaxStaminaPoints()
+        {
+            if (StaminaPoints > MaxStaminaPoints)
+            {
+                StaminaPoints = MaxStaminaPoints;
+            }
+        }
+        
         
     }
 }
