@@ -1,17 +1,21 @@
+using Abilities;
+using Events;
 using UnityEngine;
 
 namespace Player
 {
-    public class CharacterStats : MonoBehaviour
+    public class PlayerStats : MonoBehaviour
     {
         [SerializeField] public int HealthPoints;
         [SerializeField] public int MaxHealthPoints;
         [SerializeField] public int StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
-
-        [SerializeField] public float DashDuration;
-        [SerializeField] public float DashVelocity;
-
+        
+        public void Start()
+        {
+            Actions.DashExecuted += StaminaPointLoss;
+            Actions.RefreshDashComplete += StaminaPointGain;
+        }
         public void HealthPointLoss()
         {
             HealthPoints--;
@@ -54,24 +58,22 @@ namespace Player
          */
         public void LimitMaxHealthPoints()
         {
-            if (HealthPoints > MaxHealthPoints)
-            {
+            if (HealthPoints > MaxHealthPoints) {
                 HealthPoints = MaxHealthPoints;
             }
         }
-        
+
         /**
          * Mostly applicable when modifying values in the editor for testing.
          * TODO: Consider removing or using "EDITOR" settings on method in the future 
          */
         public void LimitMaxStaminaPoints()
         {
-            if (StaminaPoints > MaxStaminaPoints)
-            {
+            if (StaminaPoints > MaxStaminaPoints) {
                 StaminaPoints = MaxStaminaPoints;
             }
         }
-        
-        
+
+
     }
 }

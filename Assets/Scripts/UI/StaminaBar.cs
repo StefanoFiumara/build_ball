@@ -8,13 +8,13 @@ public class StaminaBar : MonoBehaviour
 {
     [SerializeField] protected Sprite EmptySprite, FullSprite;
 
-    protected CharacterStats _stats;
+    protected PlayerStats _stats;
 
     public List<Image> bars;
 
     public void Start()
     {
-        _stats = GetComponentInParent<CharacterStats>();
+        _stats = GetComponentInParent<PlayerStats>();
     }
 
     public void Update()
