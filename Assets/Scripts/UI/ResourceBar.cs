@@ -11,12 +11,8 @@ namespace UI
         [SerializeField] protected Sprite EmptySprite, FullSprite;
         [SerializeField] protected List<Image> Bars;
 
-        protected PlayerStats _stats;
+        [SerializeField] public PlayerStats Stats;
 
-        public void Start()
-        {
-            _stats = GetComponentInParent<PlayerStats>();
-        }
         
         protected void RenderResource(int currentResourceAmount, int maxResourceAmount)
         {

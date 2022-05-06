@@ -15,24 +15,31 @@ namespace Player
         [Tooltip("How long (in seconds) it takes for Stamina to replenish")]
         [SerializeField] private float StaminaGainInterval;
 
-        [Header("Movement")]
-        [SerializeField] public float Velocity;
+        [Header("Movement Speed")]
+        [SerializeField] public float MovementVelocity;
+
+        [Header("Throw Speed")]
+        [SerializeField] public float ThrowVelocity;
 
         private float _staminaGainTimer;
 
         public void Start()
         {
-            _staminaGainTimer = 0f;
+            _staminaGainTimer = StaminaGainInterval;
         }
 
         private void Update()
         {
+            StaminaRefreshCheck();
+        }
+
+        private void StaminaRefreshCheck()
+        {
             // Refresh Cooldown Timer
-            _staminaGainTimer += Time.deltaTime;
-            if (_staminaGainTimer >= StaminaGainInterval)
-            {
+            _staminaGainTimer -= Time.deltaTime;
+            if (_staminaGainTimer <= 0) {
                 StaminaPointGain();
-                _staminaGainTimer = 0f;
+                _staminaGainTimer = StaminaGainInterval;
             }
         }
 

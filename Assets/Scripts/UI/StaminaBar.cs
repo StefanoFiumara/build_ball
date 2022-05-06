@@ -10,9 +10,9 @@ namespace UI
     {
         public void Update()
         {
-            _stats.LimitMaxStaminaPoints();
+            Stats.LimitMaxStaminaPoints();
 
-            RenderResource(_stats.StaminaPoints, _stats.MaxStaminaPoints);
+            RenderResource(Stats.StaminaPoints, Stats.MaxStaminaPoints);
         }
     }
 }

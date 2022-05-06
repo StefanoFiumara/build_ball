@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f55454dcb0aa41b58aa3eb1d349fd933, type: 3}
   m_Name: VelocityAccelerator
   m_EditorClassIdentifier: 
-  UsageCooldown: 1
+  UsageCooldown: 15
   AbilityDuration: 5
   StaminaCost: 3
   MovementSpeedMultiplier: 8

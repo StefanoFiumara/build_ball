@@ -16,17 +16,31 @@ namespace Abilities
         public int StaminaCost;
 
         // Internal variables to track above timers
-        private bool _isAbilityActive;
-        private bool _isUsageCooldownActive;
+        public bool IsAbilityActive { get; private set; }
+        public float CurrentUsageCooldown { get; private set; }
+        public float GetUltimateCooldownPercent()
+        {
+            if (!_isUsageCooldownActive) {
+                return 1;
+            }
+            
+            return (UsageCooldown - CurrentUsageCooldown) / UsageCooldown;
+        }
 
-        private float _currentUsageCooldown;
+        private bool _isUsageCooldownActive;
         private float _currentDuration;
 
         // This tracks the current player stats that the ability modifies
         // It feels like a bit of a hack, may need to revisit
         private PlayerStats _playerStats;
 
-        private bool IsTriggerable() => !_isAbilityActive && !_isUsageCooldownActive;
+        private bool IsTriggerable() => !IsAbilityActive && !_isUsageCooldownActive;
+
+        public void OnEnable()
+        {
+            _currentDuration = AbilityDuration;
+            CurrentUsageCooldown = UsageCooldown;
+        }
 
         public void Update()
         {
@@ -39,13 +53,13 @@ namespace Abilities
 
         private void AbilityDurationCheck()
         {
-            if (_isAbilityActive) {
+            if (IsAbilityActive) {
                 AbilityUpdate(_playerStats);
 
-                _currentDuration += Time.deltaTime;
-                if (_currentDuration >= AbilityDuration) {
-                    _isAbilityActive = false;
-                    _currentDuration = 0f;
+                _currentDuration -= Time.deltaTime;
+                if (_currentDuration <= 0) {
+                    IsAbilityActive = false;
+                    _currentDuration = AbilityDuration;
                     AbilityEnd(_playerStats);
                     _playerStats = null;
                 }
@@ -55,9 +69,9 @@ namespace Abilities
         private void AbilityCooldownCheck()
         {
             if (_isUsageCooldownActive) {
-                _currentUsageCooldown += Time.deltaTime;
-                if (_currentUsageCooldown >= UsageCooldown) {
-                    _currentUsageCooldown = 0f;
+                CurrentUsageCooldown -= Time.deltaTime;
+                if (CurrentUsageCooldown <= 0) {
+                    CurrentUsageCooldown = UsageCooldown;
                     _isUsageCooldownActive = false;
                 }
             }
@@ -68,7 +82,7 @@ namespace Abilities
             if (IsTriggerable()) {
                 _playerStats = stats;
 
-                _isAbilityActive = true;
+                IsAbilityActive = true;
                 _isUsageCooldownActive = true;
                 _playerStats.StaminaPointLoss(StaminaCost);
 
