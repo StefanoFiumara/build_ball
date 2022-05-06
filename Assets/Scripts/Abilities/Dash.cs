@@ -1,90 +1,27 @@
-using System;
-using System.Collections;
-using Events;
+using Player;
 using UnityEngine;
 
 namespace Abilities
 {
+    [CreateAssetMenu(menuName = "build_ball/Ability/Dash")]
     public class Dash : Ability
     {
-        // Minimum amount of time between Dashes  
-        private bool _isResetDashRefreshTimer;
+        [Header("Dash Ability Settings")]
+        [SerializeField] public float VelocityMultiplier;
 
-        [SerializeField] public float DashVelocity;
-        public void Start()
+        protected override void AbilityStart(PlayerStats stats)
         {
-            StartCoroutine(RefreshDash());
+            stats.Velocity *= VelocityMultiplier;
         }
 
-        public bool IsTriggerable()
+        protected override void AbilityUpdate(PlayerStats stats)
         {
-            return !_isAbilityActive && !_isInternalCoolDownActive;
+            // Do nothing
         }
 
-        public void Trigger()
+        protected override void AbilityEnd(PlayerStats stats)
         {
-            if (IsTriggerable()) {
-                Actions.DashExecuted?.Invoke();
-
-                _isAbilityActive = true;
-                StartCoroutine(DashDuration());
-
-                // restore stamina point after X seconds
-                _isResetDashRefreshTimer = true;
-
-                // don't allow for use of Dash TOO fast
-                _isInternalCoolDownActive = true;
-                StartCoroutine(ProcessInternalDashCooldown());
-            }
-        }
-
-        private IEnumerator DashDuration()
-        {
-            Debug.Log("DashDuration");
-            float totalTime = 0f;
-            while (totalTime <= DURATION_IN_SECONDS) {
-                totalTime += Time.deltaTime;
-                yield return null;
-            }
-
-            _isAbilityActive = false;
-        }
-
-        private IEnumerator RefreshDash()
-        {
-            Debug.Log("RefreshDash");
-            float totalTime = 0f;
-
-            while (totalTime <= COOLDOWN_IN_SECONDS) {
-                if (_isResetDashRefreshTimer) {
-                    totalTime = 0f;
-                    _isResetDashRefreshTimer = false;
-                }
-
-                totalTime += Time.deltaTime;
-                yield return null;
-            }
-
-            Actions.RefreshDashComplete?.Invoke();
-            
-            StartCoroutine(RefreshDash());
-        }
-
-        private IEnumerator ProcessInternalDashCooldown()
-        {
-            float totalTime = 0f;
-
-            while (totalTime <= INTERNAL_COOLDOWN_IN_SECONDS) {
-                totalTime += Time.deltaTime;
-                yield return null;
-            }
-
-            _isInternalCoolDownActive = false;
-        }
-
-        public bool IsAbilityActive()
-        {
-            return _isAbilityActive;
+            stats.Velocity /= VelocityMultiplier;
         }
     }
 }

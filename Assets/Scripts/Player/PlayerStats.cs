@@ -1,21 +1,41 @@
-using Abilities;
-using Events;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerStats : ScriptableObject
+    public class PlayerStats : MonoBehaviour
     {
+        [Header("Health")]
         [SerializeField] public int HealthPoints;
         [SerializeField] public int MaxHealthPoints;
+
+        [Header("Stamina")]
         [SerializeField] public int StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
-        
+
+        [Tooltip("How long (in seconds) it takes for Stamina to replenish")]
+        [SerializeField] private float StaminaGainInterval;
+
+        [Header("Movement")]
+        [SerializeField] public float Velocity;
+
+        private float _staminaGainTimer;
+
         public void Start()
         {
-            Actions.DashExecuted += StaminaPointLoss;
-            Actions.RefreshDashComplete += StaminaPointGain;
+            _staminaGainTimer = 0f;
         }
+
+        private void Update()
+        {
+            // Refresh Cooldown Timer
+            _staminaGainTimer += Time.deltaTime;
+            if (_staminaGainTimer >= StaminaGainInterval)
+            {
+                StaminaPointGain();
+                _staminaGainTimer = 0f;
+            }
+        }
+
         public void HealthPointLoss()
         {
             HealthPoints--;
@@ -26,9 +46,10 @@ namespace Player
             HealthPoints++;
         }
 
-        public void StaminaPointLoss()
+        public void StaminaPointLoss(int amount = 1)
         {
-            StaminaPoints--;
+            StaminaPoints -= amount;
+            if (StaminaPoints < 0) StaminaPoints = 0;
         }
 
         public void StaminaPointGain()
@@ -47,14 +68,14 @@ namespace Player
             StaminaPoints = MaxStaminaPoints;
         }
 
-        public bool CanDash()
+        public bool CanActivateAbility(int abilityCost)
         {
-            return StaminaPoints > 0;
+            return StaminaPoints >= abilityCost;
         }
 
         /**
          * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         * TODO: Consider removing or using "EDITOR" settings on method in the future
          */
         public void LimitMaxHealthPoints()
         {
@@ -65,7 +86,7 @@ namespace Player
 
         /**
          * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future 
+         * TODO: Consider removing or using "EDITOR" settings on method in the future
          */
         public void LimitMaxStaminaPoints()
         {

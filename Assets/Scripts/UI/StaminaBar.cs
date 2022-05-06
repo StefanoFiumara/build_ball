@@ -1,30 +1,32 @@
-using System;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class StaminaBar : MonoBehaviour
+namespace UI
 {
-    [SerializeField] protected Sprite EmptySprite, FullSprite;
-
-    protected PlayerStats _stats;
-
-    public List<Image> bars;
-
-    public void Start()
+    public class StaminaBar : MonoBehaviour
     {
-        _stats = GetComponentInParent<PlayerStats>();
-    }
+        [SerializeField] private Sprite EmptySprite, FullSprite;
+        [SerializeField] private List<Image> Bars;
 
-    public void Update()
-    {
-        _stats.LimitMaxStaminaPoints();
+        private PlayerStats _stats;
 
-        for (int i = 0; i < bars.Count; i++)
+        public void Start()
         {
-            bars[i].sprite = i < _stats.StaminaPoints ? FullSprite : EmptySprite;
-            bars[i].enabled = i < _stats.MaxStaminaPoints;
+            _stats = GetComponentInParent<PlayerStats>();
+        }
+
+        public void Update()
+        {
+            _stats.LimitMaxStaminaPoints();
+
+            for (int i = 0; i < Bars.Count; i++)
+            {
+                Bars[i].sprite = i < _stats.StaminaPoints ? FullSprite : EmptySprite;
+                Bars[i].enabled = i < _stats.MaxStaminaPoints;
+            }
         }
     }
 }
