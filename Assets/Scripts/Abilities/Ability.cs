@@ -3,8 +3,10 @@ using UnityEngine;
 
 namespace Abilities
 {
+
     public abstract class Ability : ScriptableObject
     {
+        [Header("Basic Ability Settings")]
         [Tooltip("Minimum amount of time (in seconds) between ability usages")]
         [SerializeField] private int UsageCooldown;
 
@@ -15,17 +17,16 @@ namespace Abilities
         [SerializeField] public int StaminaCost;
 
         // Internal variables to track above timers
-        private bool _isAbilityActive = false;
-        private bool _isUsageCooldownActive = false;
+        private bool _isAbilityActive;
+        private bool _isUsageCooldownActive;
 
-        private float _currentUsageCooldown = 0f;
-        private float _currentDuration = 0f;
+        private float _currentUsageCooldown;
+        private float _currentDuration;
 
         // This tracks the current player stats that the ability modifies
         // It feels like a bit of a hack, may need to revisit
         private PlayerStats _playerStats;
 
-        public bool IsAbilityActive() => _isAbilityActive;
         public bool IsTriggerable() => !_isAbilityActive && !_isUsageCooldownActive;
 
         public void Update()

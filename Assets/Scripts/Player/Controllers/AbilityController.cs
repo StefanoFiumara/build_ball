@@ -2,12 +2,15 @@ using System;
 using Abilities;
 using UnityEngine;
 
-namespace Player
+namespace Player.Controllers
 {
     [RequireComponent(typeof(PlayerStats))]
     public class AbilityController : MonoBehaviour
     {
+        [ExpandableAttribute]
         [SerializeField] private Ability StandardAbility;
+
+        [ExpandableAttribute]
         [SerializeField] private Ability UltimateAbility;
 
         private PlayerStats _stats;

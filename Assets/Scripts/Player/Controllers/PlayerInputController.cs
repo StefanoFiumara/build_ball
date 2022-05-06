@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Player.Controllers
 {
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(BallController))]

@@ -6,6 +6,7 @@ namespace Abilities
     [CreateAssetMenu(menuName = "build_ball/Ability/Dash")]
     public class Dash : Ability
     {
+        [Header("Dash Ability Settings")]
         [SerializeField] public float VelocityMultiplier;
 
         protected override void AbilityStart(PlayerStats stats)

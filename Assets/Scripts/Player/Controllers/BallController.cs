@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Player.Controllers
 {
     public class BallController : MonoBehaviour
     {

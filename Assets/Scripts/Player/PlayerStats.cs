@@ -4,15 +4,20 @@ namespace Player
 {
     public class PlayerStats : MonoBehaviour
     {
+        [Header("Health")]
         [SerializeField] public int HealthPoints;
         [SerializeField] public int MaxHealthPoints;
+
+        [Header("Stamina")]
         [SerializeField] public int StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
 
-        [SerializeField] public float Velocity;
-
         [Tooltip("How long (in seconds) it takes for Stamina to replenish")]
         [SerializeField] private float StaminaGainInterval;
+
+        [Header("Movement")]
+        [SerializeField] public float Velocity;
+
         private float _staminaGainTimer;
 
         public void Start()

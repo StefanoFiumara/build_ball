@@ -255,7 +255,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EmptySprite: {fileID: 21300000, guid: d5d654ca49a4d4740a7b281aa12d8ee4, type: 3}
   FullSprite: {fileID: 21300000, guid: d508c31c0172041a5ae73b30c37d3a26, type: 3}
-  bars:
+  Bars:
   - {fileID: 1256297689}
   - {fileID: 2001501542}
   - {fileID: 1218427127}
@@ -565,7 +565,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EmptySprite: {fileID: 21300000, guid: cc04d22bfc857440985a9f558e10df15, type: 3}
   FullSprite: {fileID: 21300000, guid: 46a7595963d4e48f79deb857bf5f9289, type: 3}
-  bars:
+  Bars:
   - {fileID: 635398473}
   - {fileID: 91715973}
   - {fileID: 792075939}
@@ -807,11 +807,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1291282042}
   - component: {fileID: 1291282041}
+  - component: {fileID: 1291282045}
   - component: {fileID: 1291282040}
-  - component: {fileID: 1291282043}
   - component: {fileID: 1291282047}
   - component: {fileID: 1291282046}
-  - component: {fileID: 1291282045}
+  - component: {fileID: 1291282043}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged

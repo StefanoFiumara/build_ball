@@ -1,28 +1,32 @@
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
-public class HealthBar : MonoBehaviour
+
+namespace UI
 {
-    [SerializeField] protected Sprite EmptySprite, FullSprite;
-
-    protected PlayerStats _stats;
-
-    public List<Image> bars;
-
-    public void Start()
+    public class HealthBar : MonoBehaviour
     {
-        _stats = GetComponentInParent<PlayerStats>();
-    }
-    
-    public void Update()
-    {
-        _stats.LimitMaxHealthPoints();
-        
-        for (int i = 0; i < bars.Count; i++)
+        [SerializeField] protected Sprite EmptySprite, FullSprite;
+        [SerializeField] private List<Image> Bars;
+
+        private PlayerStats _stats;
+
+        public void Start()
         {
-            bars[i].sprite = i < _stats.HealthPoints ? FullSprite : EmptySprite;
-            bars[i].enabled = i < _stats.MaxHealthPoints;
+            _stats = GetComponentInParent<PlayerStats>();
+        }
+
+        public void Update()
+        {
+            _stats.LimitMaxHealthPoints();
+
+            for (int i = 0; i < Bars.Count; i++)
+            {
+                Bars[i].sprite = i < _stats.HealthPoints ? FullSprite : EmptySprite;
+                Bars[i].enabled = i < _stats.MaxHealthPoints;
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Player
+namespace Player.Controllers
 {
     [RequireComponent(typeof(PlayerStats))]
     public class MovementController : MonoBehaviour
