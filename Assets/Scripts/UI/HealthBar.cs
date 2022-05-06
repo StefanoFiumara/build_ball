@@ -6,27 +6,13 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class HealthBar : MonoBehaviour
+    public class HealthBar : ResourceBar
     {
-        [SerializeField] protected Sprite EmptySprite, FullSprite;
-        [SerializeField] private List<Image> Bars;
-
-        private PlayerStats _stats;
-
-        public void Start()
-        {
-            _stats = GetComponentInParent<PlayerStats>();
-        }
-
         public void Update()
         {
             _stats.LimitMaxHealthPoints();
 
-            for (int i = 0; i < Bars.Count; i++)
-            {
-                Bars[i].sprite = i < _stats.HealthPoints ? FullSprite : EmptySprite;
-                Bars[i].enabled = i < _stats.MaxHealthPoints;
-            }
+            RenderResource(_stats.HealthPoints, _stats.MaxHealthPoints);
         }
     }
 }
