@@ -3,20 +3,22 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 using System.Collections.Generic;
+using Extensions;
 using UnityEditor;
 #endif
 
-/// <summary>
-/// Use this property on a ScriptableObject type to allow the editors drawing the field to draw an expandable
-/// area that allows for changing the values on the object without having to change editor.
-/// </summary>
-public class ExpandableAttribute : PropertyAttribute
+namespace Extensions
 {
-    public ExpandableAttribute ()
+    /// <summary>
+    /// Use this property on a ScriptableObject type to allow the editors drawing the field to draw an expandable
+    /// area that allows for changing the values on the object without having to change editor.
+    /// </summary>
+    public class ExpandableAttribute : PropertyAttribute
     {
 
     }
 }
+
 
 #if UNITY_EDITOR
 /// <summary>
@@ -29,7 +31,6 @@ public class ExpandableAttributeDrawer : PropertyDrawer
     #region Style Setup
     private enum BackgroundStyles
     {
-        None,
         HelpBox,
         Darken,
         Lighten
@@ -58,18 +59,18 @@ public class ExpandableAttributeDrawer : PropertyDrawer
     /// <summary>
     /// The colour that is used to darken the background.
     /// </summary>
-    private static Color DARKEN_COLOUR = new Color (0.0f, 0.0f, 0.0f, 0.2f);
+    private static readonly Color Darken_Color = new (0.0f, 0.0f, 0.0f, 0.2f);
 
     /// <summary>
     /// The colour that is used to lighten the background.
     /// </summary>
-    private static Color LIGHTEN_COLOUR = new Color (1.0f, 1.0f, 1.0f, 0.2f);
+    private static readonly Color Lighten_Color = new(1.0f, 1.0f, 1.0f, 0.2f);
     #endregion
 
     /// <summary>
     /// Cached editor reference.
     /// </summary>
-    private Editor editor = null;
+    private Editor _editor;
 
     public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
     {
@@ -83,13 +84,13 @@ public class ExpandableAttributeDrawer : PropertyDrawer
         if (!property.isExpanded)
             return totalHeight;
 
-        if (editor == null)
-            Editor.CreateCachedEditor (property.objectReferenceValue, null, ref editor);
+        if (_editor == null)
+            Editor.CreateCachedEditor (property.objectReferenceValue, null, ref _editor);
 
-        if (editor == null)
+        if (_editor == null)
             return totalHeight;
 
-        SerializedProperty field = editor.serializedObject.GetIterator ();
+        SerializedProperty field = _editor.serializedObject.GetIterator ();
 
         field.NextVisible (true);
 
@@ -111,8 +112,10 @@ public class ExpandableAttributeDrawer : PropertyDrawer
 
     public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
     {
-        Rect fieldRect = new Rect (position);
-        fieldRect.height = EditorGUIUtility.singleLineHeight;
+        var fieldRect = new Rect (position)
+        {
+            height = EditorGUIUtility.singleLineHeight
+        };
 
         EditorGUI.PropertyField (fieldRect, property, label, true);
 
@@ -126,10 +129,10 @@ public class ExpandableAttributeDrawer : PropertyDrawer
         if (!property.isExpanded)
             return;
 
-        if (editor == null)
-            Editor.CreateCachedEditor (property.objectReferenceValue, null, ref editor);
+        if (_editor == null)
+            Editor.CreateCachedEditor (property.objectReferenceValue, null, ref _editor);
 
-        if (editor == null)
+        if (_editor == null)
         {
             Debug.Log ("Couldn't fetch editor");
             return;
@@ -145,7 +148,7 @@ public class ExpandableAttributeDrawer : PropertyDrawer
         bodyRect.yMin += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing
             + OUTER_SPACING;
 
-        SerializedProperty field = editor.serializedObject.GetIterator ();
+        SerializedProperty field = _editor.serializedObject.GetIterator ();
         field.NextVisible (true);
 
         marchingRect.y += INNER_SPACING + OUTER_SPACING;
@@ -174,7 +177,7 @@ public class ExpandableAttributeDrawer : PropertyDrawer
         EditorGUI.indentLevel++;
 
         int index = 0;
-        field = editor.serializedObject.GetIterator ();
+        field = _editor.serializedObject.GetIterator ();
         field.NextVisible (true);
 
         if (SHOW_SCRIPT_FIELD)
@@ -196,8 +199,8 @@ public class ExpandableAttributeDrawer : PropertyDrawer
             catch (StackOverflowException)
             {
                 field.objectReferenceValue = null;
-                Debug.LogError ("Detected self-nesting cauisng a StackOverflowException, avoid using the same " +
-                    "object iside a nested structure.");
+                Debug.LogError ("Detected self-nesting causing a StackOverflowException, avoid using the same " +
+                    "object inside a nested structure.");
             }
 
             index++;
@@ -220,11 +223,11 @@ public class ExpandableAttributeDrawer : PropertyDrawer
             break;
 
         case BackgroundStyles.Darken:
-            EditorGUI.DrawRect (rect, DARKEN_COLOUR);
+            EditorGUI.DrawRect (rect, Darken_Color);
             break;
 
         case BackgroundStyles.Lighten:
-            EditorGUI.DrawRect (rect, LIGHTEN_COLOUR);
+            EditorGUI.DrawRect (rect, Lighten_Color);
             break;
         }
     }
