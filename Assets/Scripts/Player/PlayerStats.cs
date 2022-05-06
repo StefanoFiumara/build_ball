@@ -1,5 +1,3 @@
-using Abilities;
-using Events;
 using UnityEngine;
 
 namespace Player
@@ -11,11 +9,28 @@ namespace Player
         [SerializeField] public int StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
 
+        [SerializeField] public float Velocity;
+
+        [Tooltip("How long (in seconds) it takes for Stamina to replenish")]
+        [SerializeField] private float StaminaGainInterval;
+        private float _staminaGainTimer;
+
         public void Start()
         {
-            Actions.DashExecuted += StaminaPointLoss;
-            Actions.RefreshDashComplete += StaminaPointGain;
+            _staminaGainTimer = 0f;
         }
+
+        private void Update()
+        {
+            // Refresh Cooldown Timer
+            _staminaGainTimer += Time.deltaTime;
+            if (_staminaGainTimer >= StaminaGainInterval)
+            {
+                StaminaPointGain();
+                _staminaGainTimer = 0f;
+            }
+        }
+
         public void HealthPointLoss()
         {
             HealthPoints--;
@@ -26,9 +41,10 @@ namespace Player
             HealthPoints++;
         }
 
-        public void StaminaPointLoss()
+        public void StaminaPointLoss(int amount = 1)
         {
-            StaminaPoints--;
+            StaminaPoints -= amount;
+            if (StaminaPoints < 0) StaminaPoints = 0;
         }
 
         public void StaminaPointGain()
@@ -47,9 +63,9 @@ namespace Player
             StaminaPoints = MaxStaminaPoints;
         }
 
-        public bool CanDash()
+        public bool CanActivateAbility(int abilityCost)
         {
-            return StaminaPoints > 0;
+            return StaminaPoints >= abilityCost;
         }
 
         /**

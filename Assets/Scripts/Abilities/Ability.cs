@@ -1,49 +1,47 @@
-using Events;
+using Player;
 using UnityEngine;
 
 namespace Abilities
 {
-    public abstract class Ability : MonoBehaviour
+    public abstract class Ability : ScriptableObject
     {
-        // How long in takes for Stamina to replenish
-        [SerializeField] private int RefreshCooldown;
-
-        // Minimum amount of time between Ability usages
+        [Tooltip("Minimum amount of time (in seconds) between ability usages")]
         [SerializeField] private int UsageCooldown;
 
-        // Time length of Ability
+        [Tooltip("How long (in seconds) the ability is active for")]
         [SerializeField] private float AbilityDuration;
 
-        // Internal variables to track above timers
-        private bool _isAbilityActive;
-        private bool _isUsageCooldownActive;
+        [Tooltip("How much stamina the ability consumes")]
+        [SerializeField] public int StaminaCost;
 
-        private float _currentRefreshCooldown;
-        private float _currentUsageCooldown;
-        private float _currentDuration;
+        // Internal variables to track above timers
+        private bool _isAbilityActive = false;
+        private bool _isUsageCooldownActive = false;
+
+        private float _currentUsageCooldown = 0f;
+        private float _currentDuration = 0f;
+
+        // This tracks the current player stats that the ability modifies
+        // It feels like a bit of a hack, may need to revisit
+        private PlayerStats _playerStats;
 
         public bool IsAbilityActive() => _isAbilityActive;
         public bool IsTriggerable() => !_isAbilityActive && !_isUsageCooldownActive;
-
-        public void Start()
-        {
-            _isAbilityActive = false;
-            _isUsageCooldownActive = false;
-            _currentRefreshCooldown = 0f;
-            _currentDuration = 0f;
-            _currentUsageCooldown = 0f;
-        }
 
         public void Update()
         {
             // Ability Duration Timer
             if (_isAbilityActive)
             {
+                AbilityUpdate(_playerStats);
+
                 _currentDuration += Time.deltaTime;
                 if (_currentDuration >= AbilityDuration)
                 {
                     _isAbilityActive = false;
                     _currentDuration = 0f;
+                    AbilityEnd(_playerStats);
+                    _playerStats = null;
                 }
             }
 
@@ -57,28 +55,24 @@ namespace Abilities
                     _isUsageCooldownActive = false;
                 }
             }
-
-            // Refresh Cooldown Timer
-            _currentRefreshCooldown += Time.deltaTime;
-            if (_currentRefreshCooldown >= RefreshCooldown)
-            {
-                Actions.RefreshDashComplete?.Invoke();
-                _currentRefreshCooldown = 0f;
-            }
         }
 
-        public void Trigger()
+        public void Trigger(PlayerStats stats)
         {
             if (IsTriggerable())
             {
+                _playerStats = stats;
+
                 _isAbilityActive = true;
                 _isUsageCooldownActive = true;
+                _playerStats.StaminaPointLoss(StaminaCost);
 
-                _currentRefreshCooldown = 0f;
-                TriggerAbility();
+                AbilityStart(_playerStats);
             }
         }
 
-        protected abstract void TriggerAbility();
+        protected abstract void AbilityStart(PlayerStats stats);
+        protected abstract void AbilityUpdate(PlayerStats stats);
+        protected abstract void AbilityEnd(PlayerStats stats);
     }
 }
