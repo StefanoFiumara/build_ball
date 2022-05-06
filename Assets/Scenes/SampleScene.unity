@@ -916,8 +916,8 @@ MonoBehaviour:
   MaxHealthPoints: 3
   StaminaPoints: 2
   MaxStaminaPoints: 3
-  Velocity: 3
   StaminaGainInterval: 5
+  Velocity: 5
 --- !u!114 &1291282045
 MonoBehaviour:
   m_ObjectHideFlags: 0
