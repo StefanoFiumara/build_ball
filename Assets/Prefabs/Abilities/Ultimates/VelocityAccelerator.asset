@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b7d06f061554b28b8a1422df6d0c74d, type: 3}
-  m_Name: DashAbility
+  m_Script: {fileID: 11500000, guid: f55454dcb0aa41b58aa3eb1d349fd933, type: 3}
+  m_Name: VelocityAccelerator
   m_EditorClassIdentifier: 
-  UsageCooldown: 2
-  AbilityDuration: 0.1
-  StaminaCost: 1
+  UsageCooldown: 1
+  AbilityDuration: 5
+  StaminaCost: 3
   MovementSpeedMultiplier: 8
+  ThrowSpeedMultiplier: 5

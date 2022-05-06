@@ -917,7 +917,8 @@ MonoBehaviour:
   StaminaPoints: 2
   MaxStaminaPoints: 3
   StaminaGainInterval: 5
-  Velocity: 5
+  MovementVelocity: 4
+  ThrowVelocity: 1
 --- !u!114 &1291282045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,7 +944,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StandardAbility: {fileID: 11400000, guid: f576f69d68c8f0a4f85e8943ea37a2f1, type: 2}
-  UltimateAbility: {fileID: 0}
+  UltimateAbility: {fileID: 11400000, guid: 118e26c18cc1a4e929e49d34b7a178cf, type: 2}
 --- !u!114 &1291282047
 MonoBehaviour:
   m_ObjectHideFlags: 0

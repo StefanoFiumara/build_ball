@@ -21,7 +21,7 @@ namespace Player.Controllers
         private Vector3 CalculateNewPosition(Vector2 movementDirection)
         {
             var directionToMove = new Vector3(movementDirection.x, movementDirection.y, 0f);
-            return _stats.Velocity * directionToMove;
+            return _stats.MovementVelocity * directionToMove;
         }
     }
 }

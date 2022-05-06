@@ -21,8 +21,8 @@ namespace Player.Controllers
         private void Update()
         {
             // Movement
-            var inputDirection = GetMovementDirection();
-            _movementController.Move(inputDirection);
+            var InputDirection = GetMovementDirection();
+            _movementController.Move(InputDirection);
 
             // Shooting
             if (Input.GetMouseButtonDown(0)) //Left Click
