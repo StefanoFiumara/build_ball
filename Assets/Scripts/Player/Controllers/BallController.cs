@@ -13,7 +13,7 @@ namespace Player.Controllers
 
             var movement = ball.GetComponent<BallMovement>();
             movement.Velocity = ShotStrength;
-            // TODO: adjust ball direction based on Player's facing direction?
+            // TODO: adjust ball's travel direction based on Player's mouse position
         }
     }
 }

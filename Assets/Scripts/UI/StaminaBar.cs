@@ -9,8 +9,6 @@ namespace UI
     public class StaminaBar : MonoBehaviour
     {
         [SerializeField] private Sprite EmptySprite, FullSprite;
-
-        [FormerlySerializedAs("bars")]
         [SerializeField] private List<Image> Bars;
 
         private PlayerStats _stats;

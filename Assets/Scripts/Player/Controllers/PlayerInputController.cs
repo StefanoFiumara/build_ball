@@ -5,7 +5,6 @@ namespace Player.Controllers
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(BallController))]
     [RequireComponent(typeof(AbilityController))]
-    [RequireComponent(typeof(PlayerStats))]
     public class PlayerInputController : MonoBehaviour
     {
         private MovementController _movementController;
