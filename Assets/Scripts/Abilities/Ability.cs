@@ -97,7 +97,7 @@ namespace Abilities
                 return 1;
             }
 
-            return (UsageCooldown - CurrentUsageCooldown) / UsageCooldown; 
+            return (UsageCooldown - CurrentUsageCooldown) / UsageCooldown;
         }
 
         protected abstract void AbilityStart(PlayerStats stats);
