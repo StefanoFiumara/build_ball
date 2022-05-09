@@ -65,6 +65,7 @@ namespace Player
         {
             StaminaPoints += amount;
         }
+        
         public void StaminaPointGain()
         {
             StaminaPoints++;
@@ -85,12 +86,9 @@ namespace Player
         {
             return StaminaPoints >= abilityCost;
         }
-
         public float GetPercentOfMaxStamina()
         {
             return StaminaPoints / (MaxStaminaPoints * 1.0f);
         }
-
-
     }
 }

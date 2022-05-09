@@ -6,14 +6,14 @@ namespace Player.Controllers
     {
         [SerializeField] private GameObject BallPrefab;
         [SerializeField] private float ShotStrength;
-            
+         
         private PlayerStats _stats;
 
         private void Awake()
         {
             _stats = GetComponent<PlayerStats>();
         }
-        
+
         public void ShootBall()
         {
             var ball = Instantiate(BallPrefab, transform.position, Quaternion.identity);
