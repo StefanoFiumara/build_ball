@@ -38,7 +38,7 @@ namespace Player
         {
             // Refresh Cooldown Timer
             _staminaTickIntervalTimer -= Time.deltaTime;
-            if (_staminaTickIntervalTimer <= 0) {
+            if (_staminaTickIntervalTimer <= 0 && StaminaPoints < MaxStaminaPoints) {
                 //StaminaPointGain();
                 AddStamina(StaminaTickGainAmount);
                 _staminaTickIntervalTimer = StaminaTickInterval;
@@ -84,28 +84,6 @@ namespace Player
         public bool CanActivateAbility(int abilityCost)
         {
             return StaminaPoints >= abilityCost;
-        }
-
-        /**
-         * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future
-         */
-        public void LimitMaxHealthPoints()
-        {
-            if (HealthPoints > MaxHealthPoints) {
-                HealthPoints = MaxHealthPoints;
-            }
-        }
-
-        /**
-         * Mostly applicable when modifying values in the editor for testing.
-         * TODO: Consider removing or using "EDITOR" settings on method in the future
-         */
-        public void LimitMaxStaminaPoints()
-        {
-            if (StaminaPoints > MaxStaminaPoints) {
-                StaminaPoints = MaxStaminaPoints;
-            }
         }
 
         public float GetPercentOfMaxStamina()

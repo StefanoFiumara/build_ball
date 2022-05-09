@@ -17,16 +17,15 @@ namespace UI
         {
             _image = GetComponent<Image>();
         }
-        
+
         public void Update()
         {
             if (AbilityController.StandardAbility.IsUsageCooldownActive) {
-                _image.fillAmount = AbilityController.StandardAbility.GetUsageCooldownPercent();    
+                _image.fillAmount = AbilityController.StandardAbility.GetUsageCooldownPercent();
             }
             else {
                 _image.fillAmount = 0;
             }
-            
         }
     }
 }

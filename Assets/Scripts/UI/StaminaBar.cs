@@ -10,8 +10,6 @@ namespace UI
     {
         public void Update()
         {
-            Stats.LimitMaxStaminaPoints();
-
             RenderResource(Mathf.FloorToInt(Stats.StaminaPoints), Stats.MaxStaminaPoints);
         }
     }
