@@ -7,7 +7,7 @@ namespace Abilities
     public abstract class Ability : ScriptableObject
     {
         [Header("Basic Ability Settings")] [Tooltip("Minimum amount of time (in seconds) between ability usages")] [SerializeField]
-        private int UsageCooldown;
+        public int UsageCooldown;
 
         [Tooltip("How long (in seconds) the ability is active for")] [SerializeField]
         private float AbilityDuration;
@@ -16,17 +16,23 @@ namespace Abilities
         public int StaminaCost;
 
         // Internal variables to track above timers
-        private bool _isAbilityActive;
-        private bool _isUsageCooldownActive;
+        public bool IsAbilityActive { get; private set; }
+        public float CurrentUsageCooldown { get; private set; }
 
-        private float _currentUsageCooldown;
+        public bool IsUsageCooldownActive;
         private float _currentDuration;
 
         // This tracks the current player stats that the ability modifies
         // It feels like a bit of a hack, may need to revisit
         private PlayerStats _playerStats;
 
-        private bool IsTriggerable() => !_isAbilityActive && !_isUsageCooldownActive;
+        private bool IsTriggerable() => !IsAbilityActive && !IsUsageCooldownActive;
+
+        public void OnEnable()
+        {
+            _currentDuration = AbilityDuration;
+            CurrentUsageCooldown = UsageCooldown;
+        }
 
         public void Update()
         {
@@ -39,13 +45,14 @@ namespace Abilities
 
         private void AbilityDurationCheck()
         {
-            if (_isAbilityActive) {
+            if (IsAbilityActive) {
                 AbilityUpdate(_playerStats);
 
-                _currentDuration += Time.deltaTime;
-                if (_currentDuration >= AbilityDuration) {
-                    _isAbilityActive = false;
-                    _currentDuration = 0f;
+                _currentDuration -= Time.deltaTime;
+                if (_currentDuration <= 0) {
+                    IsAbilityActive = false;
+                    _currentDuration = AbilityDuration;
+                    
                     AbilityEnd(_playerStats);
                     _playerStats = null;
                 }
@@ -54,11 +61,12 @@ namespace Abilities
 
         private void AbilityCooldownCheck()
         {
-            if (_isUsageCooldownActive) {
-                _currentUsageCooldown += Time.deltaTime;
-                if (_currentUsageCooldown >= UsageCooldown) {
-                    _currentUsageCooldown = 0f;
-                    _isUsageCooldownActive = false;
+
+            if (IsUsageCooldownActive) {
+                CurrentUsageCooldown -= Time.deltaTime;
+                if (CurrentUsageCooldown <= 0) {
+                    CurrentUsageCooldown = UsageCooldown;
+                    IsUsageCooldownActive = false;
                 }
             }
         }
@@ -68,14 +76,33 @@ namespace Abilities
             if (IsTriggerable()) {
                 _playerStats = stats;
 
-                _isAbilityActive = true;
-                _isUsageCooldownActive = true;
+                IsAbilityActive = true;
+                IsUsageCooldownActive = true;
+
                 _playerStats.StaminaPointLoss(StaminaCost);
 
                 AbilityStart(_playerStats);
             }
         }
 
+        public float GetUltimateCooldownPercent()
+        {
+            if (!IsUsageCooldownActive) {
+                return 1;
+            }
+
+            return (UsageCooldown - CurrentUsageCooldown) / UsageCooldown;
+        }
+
+        public float GetUsageCooldownPercent()
+        {
+            if (!IsUsageCooldownActive) {
+                return 1;
+            }
+
+            return (UsageCooldown - CurrentUsageCooldown) / UsageCooldown;
+        }
+        
         protected abstract void AbilityStart(PlayerStats stats);
         protected abstract void AbilityUpdate(PlayerStats stats);
         protected abstract void AbilityEnd(PlayerStats stats);
