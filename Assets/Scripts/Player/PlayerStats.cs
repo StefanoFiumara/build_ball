@@ -4,28 +4,29 @@ namespace Player
 {
     public class PlayerStats : MonoBehaviour
     {
-        [Header("Health")]
-        [SerializeField] public int HealthPoints;
+        [Header("Health")] [SerializeField] public float HealthPoints;
         [SerializeField] public int MaxHealthPoints;
 
-        [Header("Stamina")]
-        [SerializeField] public int StaminaPoints;
+        [Header("Stamina")] [SerializeField] public float StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
 
-        [Tooltip("How long (in seconds) it takes for Stamina to replenish")]
-        [SerializeField] private float StaminaGainInterval;
+        [Tooltip("How long (in seconds) a Stamina Tick is")] [SerializeField]
+        private float StaminaTickInterval;
 
-        [Header("Movement Speed")]
-        [SerializeField] public float MovementVelocity;
+        [Tooltip("How much Stamina is restored per Stamina Tick")] [SerializeField]
+        private float StaminaTickGainAmount;
 
-        [Header("Throw Speed")]
-        [SerializeField] public float ThrowVelocity;
+        [Header("Movement Speed")] [SerializeField]
+        public float MovementVelocity;
 
-        private float _staminaGainTimer;
+        [Header("Throw Speed")] [SerializeField]
+        public float ThrowVelocity;
+
+        private float _staminaTickIntervalTimer;
 
         public void Start()
         {
-            _staminaGainTimer = StaminaGainInterval;
+            _staminaTickIntervalTimer = StaminaTickInterval;
         }
 
         private void Update()
@@ -36,10 +37,11 @@ namespace Player
         private void StaminaRefreshCheck()
         {
             // Refresh Cooldown Timer
-            _staminaGainTimer -= Time.deltaTime;
-            if (_staminaGainTimer <= 0) {
-                StaminaPointGain();
-                _staminaGainTimer = StaminaGainInterval;
+            _staminaTickIntervalTimer -= Time.deltaTime;
+            if (_staminaTickIntervalTimer <= 0) {
+                //StaminaPointGain();
+                AddStamina(StaminaTickGainAmount);
+                _staminaTickIntervalTimer = StaminaTickInterval;
             }
         }
 
@@ -59,6 +61,10 @@ namespace Player
             if (StaminaPoints < 0) StaminaPoints = 0;
         }
 
+        public void AddStamina(float amount)
+        {
+            StaminaPoints += amount;
+        }
         public void StaminaPointGain()
         {
             StaminaPoints++;
@@ -100,6 +106,11 @@ namespace Player
             if (StaminaPoints > MaxStaminaPoints) {
                 StaminaPoints = MaxStaminaPoints;
             }
+        }
+
+        public float GetPercentOfMaxStamina()
+        {
+            return StaminaPoints / (MaxStaminaPoints * 1.0f);
         }
 
 

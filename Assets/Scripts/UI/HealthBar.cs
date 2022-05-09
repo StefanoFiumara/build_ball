@@ -12,7 +12,7 @@ namespace UI
         {
             Stats.LimitMaxHealthPoints();
 
-            RenderResource(Stats.HealthPoints, Stats.MaxHealthPoints);
+            RenderResource(Mathf.FloorToInt(Stats.HealthPoints), Stats.MaxHealthPoints);
         }
     }
 }

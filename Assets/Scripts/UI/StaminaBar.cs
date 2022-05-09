@@ -12,7 +12,7 @@ namespace UI
         {
             Stats.LimitMaxStaminaPoints();
 
-            RenderResource(Stats.StaminaPoints, Stats.MaxStaminaPoints);
+            RenderResource(Mathf.FloorToInt(Stats.StaminaPoints), Stats.MaxStaminaPoints);
         }
     }
 }
