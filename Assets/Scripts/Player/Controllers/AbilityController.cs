@@ -7,6 +7,7 @@ namespace Player.Controllers
     [RequireComponent(typeof(PlayerStats))]
     public class AbilityController : MonoBehaviour
     {
+
         [Expandable] [SerializeField] public Ability StandardAbility;
 
         [Expandable] [SerializeField] public Ability UltimateAbility;

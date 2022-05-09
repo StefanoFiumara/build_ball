@@ -12,7 +12,6 @@ namespace UI
         [SerializeField] protected List<Image> Bars;
 
         [SerializeField] public PlayerStats Stats;
-
         
         protected void RenderResource(int currentResourceAmount, int maxResourceAmount)
         {
