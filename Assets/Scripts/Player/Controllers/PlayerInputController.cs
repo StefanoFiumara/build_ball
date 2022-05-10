@@ -41,7 +41,6 @@ namespace Player.Controllers
             {
                 _abilityController.ActivateUltimateAbility();
             }
-
         }
 
         private Vector2 GetMovementDirection()

@@ -1,4 +1,6 @@
+using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -22,11 +24,16 @@ namespace Player
         [Header("Throw Speed")] [SerializeField]
         public float ThrowVelocity;
 
+        [FormerlySerializedAs("TeamAffiliation")] [Header("Team Affiliation")] [SerializeField]
+        public TeamAffiliationEnum teamAffiliation;
+
         private float _staminaTickIntervalTimer;
 
         public void Start()
         {
             _staminaTickIntervalTimer = StaminaTickInterval;
+
+            teamAffiliation = TeamAffiliationEnum.TeamA; // TODO: Assign actual team based on spawning
         }
 
         private void Update()
