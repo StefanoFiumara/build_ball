@@ -15,4 +15,5 @@ MonoBehaviour:
   UsageCooldown: 2
   AbilityDuration: 0.1
   StaminaCost: 1
-  MovementSpeedMultiplier: 8
+  IsUsageCooldownActive: 0
+  MovementSpeedMultiplier: 6
