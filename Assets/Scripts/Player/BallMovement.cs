@@ -1,6 +1,5 @@
-using DefaultNamespace;
+using Models;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Player
 {
@@ -28,6 +27,7 @@ namespace Player
                 if (Velocity < FrictionThreshold)
                 {
                     BallState = BallStateEnum.Stationary;
+                    Velocity = 0;
                 }
             }
         }

@@ -1,4 +1,5 @@
-using DefaultNamespace;
+using System;
+using Models;
 using UnityEngine;
 
 namespace Player.Controllers
@@ -9,8 +10,14 @@ namespace Player.Controllers
         [SerializeField] private float ShotStrength;
         private const float BallHoldXOffset = 0.5f;
         private const float BallHoldYOffset = 0.5f;
+        private Vector3 _ballOffsetVector;
          
         private PlayerStats _stats;
+
+        private void Start()
+        {
+            _ballOffsetVector = new Vector3(BallHoldXOffset, BallHoldYOffset);
+        }
 
         private void Awake()
         {
@@ -21,7 +28,7 @@ namespace Player.Controllers
         {
             if (Ball != null)
             {
-                Ball.transform.position = transform.position + new Vector3(BallHoldXOffset, BallHoldYOffset);
+                Ball.transform.position = transform.position + _ballOffsetVector;
             }
         }
 
@@ -34,7 +41,7 @@ namespace Player.Controllers
             }
 
             Ball.Velocity = ShotStrength * _stats.ThrowVelocity;
-            Ball.TeamAffiliation = _stats.teamAffiliation;
+            Ball.TeamAffiliation = _stats.TeamAffiliation;
             Ball.BallState = BallStateEnum.Moving;
             Ball = null;
 
@@ -56,7 +63,7 @@ namespace Player.Controllers
                 Ball = ball;
             }
             else if (Ball.BallState == BallStateEnum.Moving
-                     && Ball.TeamAffiliation != _stats.teamAffiliation)
+                     && Ball.TeamAffiliation != _stats.TeamAffiliation)
             {
                 // TODO: Get hit, drop ball?
             }
