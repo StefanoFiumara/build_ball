@@ -20,5 +20,13 @@ namespace UI
         {
             Application.Quit();
         }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                ReturnToGame();
+            }
+        }
     }
 }
