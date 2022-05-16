@@ -2362,7 +2362,7 @@ MonoBehaviour:
   StaminaTickGainAmount: 0.025
   MovementVelocity: 4
   ThrowVelocity: 1
-  teamAffiliation: 1
+  TeamAffiliation: 0
 --- !u!61 &1291282049
 BoxCollider2D:
   m_ObjectHideFlags: 0

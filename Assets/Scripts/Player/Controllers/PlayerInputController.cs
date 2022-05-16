@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Player.Controllers
 {
@@ -40,6 +41,12 @@ namespace Player.Controllers
             if (Input.GetKeyDown(KeyCode.R))
             {
                 _abilityController.ActivateUltimateAbility();
+            }
+            
+            // In-Game Menu
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SceneManager.LoadScene("Scenes/InGameMenuScene");
             }
         }
 
