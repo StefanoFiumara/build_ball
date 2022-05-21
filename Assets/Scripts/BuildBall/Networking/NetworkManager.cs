@@ -26,10 +26,12 @@ namespace BuildBall.Networking
 
         private void Start()
         {
-            #if UNITY_STANDALONE
-            JoinOrHostGame();
-            #endif
-
+            // Automatically join the default room when running outside of the Unity Editor
+            // Use the Network Debug Component on the NetworkManager object to test in the editor.
+            if (Application.platform != RuntimePlatform.WindowsEditor)
+            {
+                JoinOrHostGame();
+            }
         }
 
         private async void JoinOrHostGame()
