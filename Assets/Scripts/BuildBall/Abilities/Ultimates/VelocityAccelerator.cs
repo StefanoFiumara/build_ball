@@ -13,8 +13,8 @@ namespace BuildBall.Abilities.Ultimates
 
         protected override void AbilityStart(PlayerStats stats)
         {
-            stats.MovementVelocity *= MovementSpeedMultiplier;
-            stats.ThrowVelocity *= ThrowSpeedMultiplier;
+            stats.MovementSpeed *= MovementSpeedMultiplier;
+            stats.ThrowSpeed *= ThrowSpeedMultiplier;
         }
 
         protected override void AbilityUpdate(PlayerStats stats)
@@ -24,8 +24,8 @@ namespace BuildBall.Abilities.Ultimates
 
         protected override void AbilityEnd(PlayerStats stats)
         {
-            stats.MovementVelocity /= MovementSpeedMultiplier;
-            stats.ThrowVelocity /= ThrowSpeedMultiplier;
+            stats.MovementSpeed /= MovementSpeedMultiplier;
+            stats.ThrowSpeed /= ThrowSpeedMultiplier;
         }
     }
 }

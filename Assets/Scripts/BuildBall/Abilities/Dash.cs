@@ -12,7 +12,7 @@ namespace BuildBall.Abilities
 
         protected override void AbilityStart(PlayerStats stats)
         {
-            stats.MovementVelocity *= MovementSpeedMultiplier;
+            stats.MovementSpeed *= MovementSpeedMultiplier;
         }
 
         protected override void AbilityUpdate(PlayerStats stats)
@@ -22,7 +22,7 @@ namespace BuildBall.Abilities
 
         protected override void AbilityEnd(PlayerStats stats)
         {
-            stats.MovementVelocity /= MovementSpeedMultiplier;
+            stats.MovementSpeed /= MovementSpeedMultiplier;
         }
     }
 }

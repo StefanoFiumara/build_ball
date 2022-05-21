@@ -1,3 +1,5 @@
+using BuildBall.Networking;
+using Fusion;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,7 +9,7 @@ namespace BuildBall.Player.Controllers
     [RequireComponent(typeof(MovementController))]
     [RequireComponent(typeof(BallController))]
     [RequireComponent(typeof(AbilityController))]
-    public class PlayerInputController : MonoBehaviour
+    public class PlayerInputController : NetworkBehaviour
     {
         private MovementController _movementController;
         private BallController _ballController;
@@ -24,6 +26,8 @@ namespace BuildBall.Player.Controllers
 
         private void Update()
         {
+            /*
+            // TODO: Figure out what to do with these
             var playerIsDead = _playerStats.IsDead();
             if (playerIsDead)
             {
@@ -47,40 +51,34 @@ namespace BuildBall.Player.Controllers
             {
                 return;
             }
-
-            // Movement
-            var inputDirection = GetMovementDirection();
-            _movementController.Move(inputDirection);
-
-            // Shooting
-            if (Input.GetMouseButtonDown(0)) //Left Click
-            {
-                _ballController.ShootBall();
-            }
-
-            // Standard Ability
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                _abilityController.ActivateStandardAbility();
-            }
-
-            // Ultimate Ability
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                _abilityController.ActivateUltimateAbility();
-            }
+            */
         }
 
-        private Vector2 GetMovementDirection()
+        public override void FixedUpdateNetwork()
         {
-            var direction = Vector2.zero;
+            if (GetInput(out NetworkInputData input))
+            {
+                // Movement
+                _movementController.Move(input.MoveDirection, Runner.DeltaTime);
 
-            if (Input.GetKey(KeyCode.W)) direction += Vector2.up;
-            if (Input.GetKey(KeyCode.S)) direction += Vector2.down;
-            if (Input.GetKey(KeyCode.A)) direction += Vector2.left;
-            if (Input.GetKey(KeyCode.D)) direction += Vector2.right;
+                // Shooting
+                if (input.IsShootPressed)
+                {
+                    _ballController.ShootBall();
+                }
 
-            return direction.normalized;
+                // Standard Ability
+                if (input.IsStandardAbilityPressed)
+                {
+                    _abilityController.ActivateStandardAbility();
+                }
+
+                // Ultimate Ability
+                if (input.IsUltimateAbilityPressed)
+                {
+                    _abilityController.ActivateUltimateAbility();
+                }
+            }
         }
     }
 }

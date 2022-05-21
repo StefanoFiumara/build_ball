@@ -20,11 +20,19 @@ namespace BuildBall.UI
             CooldownTextOverlay.gameObject.SetActive(false);
             CooldownImageOverlay.fillAmount = 0.0f;
 
-            _abilityController = PlayerInputController.GetComponent<AbilityController>();
+            if (PlayerInputController != null)
+            {
+                _abilityController = PlayerInputController.GetComponent<AbilityController>();
+            }
         }
 
         public void Update()
         {
+            if (PlayerInputController == null)
+            {
+                return;
+            }
+
             ApplyCooldown();
 
             if (_abilityController.GetUltimateCooldownPercent() < 1) {

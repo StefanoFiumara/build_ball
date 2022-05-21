@@ -39,7 +39,7 @@ namespace BuildBall.Player.Controllers
                 return;
             }
 
-            Ball.Velocity = ShotStrength * _stats.ThrowVelocity;
+            Ball.Velocity = ShotStrength * _stats.ThrowSpeed;
             Ball.TeamAffiliation = _stats.TeamAffiliation;
             Ball.BallState = BallStateEnum.Moving;
             Ball = null;

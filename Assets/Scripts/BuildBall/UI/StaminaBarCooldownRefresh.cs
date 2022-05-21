@@ -16,10 +16,17 @@ namespace BuildBall.UI
 
         public void Update()
         {
-            if (AbilityController.StandardAbility.IsUsageCooldownActive) {
+            if (AbilityController == null)
+            {
+                return;
+            }
+
+            if (AbilityController.StandardAbility.IsUsageCooldownActive)
+            {
                 _image.fillAmount = AbilityController.StandardAbility.GetUsageCooldownPercent();
             }
-            else {
+            else
+            {
                 _image.fillAmount = 0;
             }
         }

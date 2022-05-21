@@ -1,77 +1,74 @@
 using System.Collections;
 using BuildBall.Models;
+using DG.Tweening;
+using Fusion;
 using UnityEngine;
 
 namespace BuildBall.Player
 {
-    public class PlayerStats : MonoBehaviour
+    public class PlayerStats : NetworkBehaviour
     {
-        [Header("Health")] [SerializeField] public float HealthPoints;
+        [Networked] public float HealthPoints { get; set; }
+        [Networked] public float StaminaPoints { get; set; }
+        [Networked] public float CurrentMovementSpeed { get; set; }
+        [Networked] public float CurrentThrowSpeed { get; set; }
+        [Networked] public TeamAffiliationEnum TeamAffiliation { get; set; }
+        [Networked] private TickTimer StaminaGainTimer { get; set; }
+        [Networked] private TickTimer InvulnerabilityTimer { get; set; }
+
+        [Networked(OnChanged = nameof(OnInvulnerableChanged))] public bool IsInvulnerable { get; private set; }
+
+
+        [Header("Default/Starting Stats")]
         [SerializeField] public int MaxHealthPoints;
-
-        [Header("Invulnerability Seconds After Hit")]
-        public float InvulnerabilitySecondsAfterHit;
-
-        [Header("Stamina")] [SerializeField] public float StaminaPoints;
         [SerializeField] public int MaxStaminaPoints;
+        [SerializeField] public float MovementSpeed;
+        [SerializeField] public float ThrowSpeed;
 
-        [Tooltip("How long (in seconds) a Stamina Tick is")] [SerializeField]
-        private float StaminaTickInterval;
+        [SerializeField] private float InvulnerabilitySecondsAfterHit;
 
-        [Tooltip("How much Stamina is restored per Stamina Tick")] [SerializeField]
-        private float StaminaTickGainAmount;
+        [Tooltip("How long (in seconds) a Stamina Tick is")]
+        [SerializeField] private float StaminaTickInterval;
 
-        [Header("Movement Speed")] [SerializeField]
-        public float MovementVelocity;
+        [Tooltip("How much Stamina is restored per Stamina Tick")]
+        [SerializeField] private float StaminaTickGainAmount;
 
-        [Header("Throw Speed")] [SerializeField]
-        public float ThrowVelocity;
-
-        [Header("Team Affiliation")]
-        public TeamAffiliationEnum TeamAffiliation;
-
-        [Header("Is Dummy")]
-        public bool IsDummy;
-
-        public bool IsInvulnerable => _isInvulnerable;
-
-        private float _staminaTickIntervalTimer;
-
-        private bool _isInvulnerable;
-
-        public void Start()
+        public void Init(TeamAffiliationEnum team)
         {
-            _staminaTickIntervalTimer = StaminaTickInterval;
+            CurrentMovementSpeed = MovementSpeed;
+            CurrentThrowSpeed = ThrowSpeed;
 
-            if (TeamAffiliation == TeamAffiliationEnum.None || TeamAffiliation == TeamAffiliationEnum.Unknown)
+            HealthPoints = MaxHealthPoints;
+            StaminaPoints = MaxStaminaPoints;
+
+            StaminaGainTimer = TickTimer.CreateFromSeconds(Runner, StaminaTickInterval);
+
+            TeamAffiliation = team;
+        }
+
+        public override void FixedUpdateNetwork()
+        {
+            if (StaminaGainTimer.Expired(Runner))
             {
-                TeamAffiliation = TeamAffiliationEnum.TeamA; // TODO: Assign actual team based on spawning
-            }
-        }
-
-        private void Update()
-        {
-            StaminaRefreshCheck();
-        }
-
-        private void StaminaRefreshCheck()
-        {
-            // Refresh Cooldown Timer
-            _staminaTickIntervalTimer -= Time.deltaTime;
-            if (_staminaTickIntervalTimer <= 0 && StaminaPoints < MaxStaminaPoints) {
-                //StaminaPointGain();
                 AddStamina(StaminaTickGainAmount);
-                _staminaTickIntervalTimer = StaminaTickInterval;
+                StaminaGainTimer = TickTimer.CreateFromSeconds(Runner, StaminaTickInterval);
             }
+
+            if (InvulnerabilityTimer.Expired(Runner))
+            {
+                IsInvulnerable = false;
+            }
+
         }
 
         public void HealthPointLoss()
         {
-            if (_isInvulnerable) return;
+            if (IsInvulnerable) return;
 
             HealthPoints--;
 
-            StartCoroutine(BecomeTemporarilyInvulnerable());
+            IsInvulnerable = true;
+            InvulnerabilityTimer = TickTimer.CreateFromSeconds(Runner, InvulnerabilitySecondsAfterHit);
         }
 
         public void HealthPointGain()
@@ -93,22 +90,10 @@ namespace BuildBall.Player
         public void AddStamina(float amount)
         {
             StaminaPoints += amount;
-        }
-        
-        public void StaminaPointGain()
-        {
-            StaminaPoints++;
-        }
-
-
-        public void ResetHealth()
-        {
-            HealthPoints = MaxHealthPoints;
-        }
-
-        public void ResetStamina()
-        {
-            StaminaPoints = MaxStaminaPoints;
+            if (StaminaPoints > MaxStaminaPoints)
+            {
+                StaminaPoints = MaxStaminaPoints;
+            }
         }
 
         public bool CanActivateAbility(int abilityCost)
@@ -120,10 +105,24 @@ namespace BuildBall.Player
             return StaminaPoints / (MaxStaminaPoints * 1.0f);
         }
 
+        private static void OnInvulnerableChanged(Changed<PlayerStats> changed)
+        {
+            // TODO: Test this animation
+            var renderer = changed.Behaviour.GetComponentInChildren<SpriteRenderer>();
+
+            if (changed.Behaviour.IsInvulnerable)
+            {
+                renderer.DOFade(0, 0.15f).SetLoops(-1, LoopType.Yoyo);
+            }
+            else
+            {
+                renderer.DOFade(1, 0.05f);
+            }
+
+
+        }
         private IEnumerator BecomeTemporarilyInvulnerable()
         {
-            _isInvulnerable = true;
-
             const float invulnerabilityDeltaTime = 0.15f;
 
             for (float i = 0; i < InvulnerabilitySecondsAfterHit; i += invulnerabilityDeltaTime)
@@ -142,7 +141,6 @@ namespace BuildBall.Player
             }
 
             ScaleModelTo(gameObject, Vector3.one);
-            _isInvulnerable = false;
         }
 
         private void ScaleModelTo(GameObject theGameObject, Vector3 scale)

@@ -13,10 +13,13 @@ namespace BuildBall.UI
         {
             _image = GetComponent<Image>();
         }
-        
+
         public void Update()
         {
-            _image.fillAmount = Stats.GetPercentOfMaxStamina();
+            if (Stats != null)
+            {
+                _image.fillAmount = Stats.GetPercentOfMaxStamina();
+            }
         }
     }
 }

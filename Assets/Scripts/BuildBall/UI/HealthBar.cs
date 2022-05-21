@@ -6,7 +6,10 @@ namespace BuildBall.UI
     {
         public void Update()
         {
-            RenderResource(Mathf.FloorToInt(Stats.HealthPoints), Stats.MaxHealthPoints);
+            if (Stats != null)
+            {
+                RenderResource(Mathf.FloorToInt(Stats.HealthPoints), Stats.MaxHealthPoints);
+            }
         }
     }
 }

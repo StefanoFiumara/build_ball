@@ -1,11 +1,12 @@
 using BuildBall.Abilities;
 using Extensions;
+using Fusion;
 using UnityEngine;
 
 namespace BuildBall.Player.Controllers
 {
     [RequireComponent(typeof(PlayerStats))]
-    public class AbilityController : MonoBehaviour
+    public class AbilityController : NetworkBehaviour
     {
         [Expandable] public Ability StandardAbility;
 
@@ -18,7 +19,7 @@ namespace BuildBall.Player.Controllers
             _stats = GetComponent<PlayerStats>();
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
             if (StandardAbility != null) StandardAbility.Update();
             if (UltimateAbility != null) UltimateAbility.Update();
