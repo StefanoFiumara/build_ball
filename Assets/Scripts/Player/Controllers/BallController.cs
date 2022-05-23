@@ -48,6 +48,11 @@ namespace Player.Controllers
             // TODO: adjust ball's travel direction based on Player's mouse position
         }
 
+        private void DropBall()
+        {
+            Ball = null;
+        }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             var ball = other.GetComponent<BallMovement>();
@@ -56,16 +61,26 @@ namespace Player.Controllers
                 return;
             }
 
-            if (ball.BallState == BallStateEnum.Stationary
-                && Ball == null)
+            if ((ball.BallState == BallStateEnum.Stationary || (ball.BallState == BallStateEnum.Moving && ball.TeamAffiliation == TeamAffiliationEnum.None))
+                && Ball == null
+                && !_stats.IsInvulnerable)
             {
                 // Pick up the ball
                 Ball = ball;
+                Ball.BallState = BallStateEnum.Held;
             }
-            else if (Ball.BallState == BallStateEnum.Moving
-                     && Ball.TeamAffiliation != _stats.TeamAffiliation)
+            else if (ball.BallState == BallStateEnum.Moving
+                     && ball.TeamAffiliation != _stats.TeamAffiliation
+                     && ball.TeamAffiliation != TeamAffiliationEnum.None
+                     && !_stats.IsInvulnerable)
             {
-                // TODO: Get hit, drop ball?
+                _stats.HealthPointLoss();
+
+                ball.TeamAffiliation = TeamAffiliationEnum.None;
+                ball.Direction = new Vector3(ball.Direction.x * -1, ball.Direction.y * -1, ball.Direction.z);
+                ball.Velocity *= 0.2f;
+
+                DropBall();
             }
         }
     }

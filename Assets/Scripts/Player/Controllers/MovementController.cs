@@ -18,6 +18,11 @@ namespace Player.Controllers
             transform.position += moveDelta * Time.deltaTime;
         }
 
+        public void MoveToGraveyard()
+        {
+            transform.position = new Vector3(-1000, -1000, 0); // TODO RH: Is this the right way to move them off the field?
+        }
+
         private Vector3 CalculateNewPosition(Vector2 movementDirection)
         {
             var directionToMove = new Vector3(movementDirection.x, movementDirection.y, 0f);

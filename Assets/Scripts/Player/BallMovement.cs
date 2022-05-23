@@ -17,7 +17,6 @@ namespace Player
             BallState = BallStateEnum.Stationary;
         }
 
-        // Update is called once per frame
         public void Update()
         {
             if (BallState == BallStateEnum.Moving)
@@ -27,6 +26,7 @@ namespace Player
                 if (Velocity < FrictionThreshold)
                 {
                     BallState = BallStateEnum.Stationary;
+                    TeamAffiliation = TeamAffiliationEnum.None;
                     Velocity = 0;
                 }
             }

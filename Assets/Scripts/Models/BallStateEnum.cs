@@ -4,6 +4,7 @@
     {
         Unknown = 0,
         Stationary = 1,
-        Moving = 2
+        Held = 2,
+        Moving = 3
     }
 }
