@@ -9,38 +9,82 @@ namespace BuildBall.Player.Controllers
     public class AbilityController : NetworkBehaviour
     {
         [Expandable] public Ability StandardAbility;
-
         [Expandable] public Ability UltimateAbility;
 
+        [Networked] private TickTimer AbilityDurationTimer { get; set; }
+        [Networked] private TickTimer AbilityUsageTimer { get; set; }
+
         private PlayerStats _stats;
+        private Ability _activeAbility;
+
+        public float UltimateUsageCooldownPercent => GetUsageCooldownPercent(UltimateAbility);
+        public float UltimateUsageCooldown => GetUsageCooldown(UltimateAbility);
+
+        public float StandardUsageCooldownPercent => GetUsageCooldownPercent(StandardAbility);
+        public float StandardUsageCooldown => GetUsageCooldown(StandardAbility);
+
+        public bool IsStandardUsageCooldownActive => IsUsageCooldownActive(StandardAbility);
 
         private void Awake()
         {
             _stats = GetComponent<PlayerStats>();
+            _activeAbility = null;
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (StandardAbility != null) StandardAbility.Update();
-            if (UltimateAbility != null) UltimateAbility.Update();
+            // TODO SF: This only allows for one active ability at a time
+            //          Also, the long usage timer on ultimates prevents standard
+            //          abilities from activating until it expires,
+            //          need to have separate usage timers for each ability, at least.
+            if (_activeAbility != null)
+            {
+                _activeAbility.AbilityUpdate(_stats);
+
+                if (AbilityDurationTimer.Expired(Runner))
+                {
+                    Debug.Log("Ability Ended");
+                    _activeAbility.AbilityEnd(_stats);
+                    _activeAbility = null;
+                }
+            }
         }
 
         public void ActivateStandardAbility() => ActivateAbility(StandardAbility);
         public void ActivateUltimateAbility() => ActivateAbility(UltimateAbility);
 
+
+        private bool IsUsageCooldownActive(Ability ability)
+        {
+            // TODO: Split for Ultimate
+            return !AbilityUsageTimer.ExpiredOrNotRunning(Runner);
+        }
+
         private void ActivateAbility(Ability ability)
         {
-            if (ability == null) return;
+            if (_stats.CanActivateAbility(ability.StaminaCost) && AbilityUsageTimer.ExpiredOrNotRunning(Runner))
+            {
+                AbilityUsageTimer = TickTimer.CreateFromSeconds(Runner, ability.UsageCooldown);
+                AbilityDurationTimer = TickTimer.CreateFromSeconds(Runner, ability.AbilityDuration);
 
-            if (_stats.CanActivateAbility(ability.StaminaCost)) {
-                ability.Trigger(_stats);
+                Debug.Log("Ability Started");
+                ability.AbilityStart(_stats);
+
+                _activeAbility = ability;
             }
         }
 
-        public bool IsUltimateActive() => UltimateAbility.IsAbilityActive;
+        private float GetUsageCooldownPercent(Ability ability)
+        {
+            // TODO: Query correct timer depending on ability parameter
+            var remaining = AbilityUsageTimer.RemainingTime(Runner) ?? 0f;
+             return remaining / ability.UsageCooldown;
+        }
 
-        public float GetUltimateCooldownPercent() => UltimateAbility.GetUltimateCooldownPercent();
-
-        public float CurrentUsageCooldown() => UltimateAbility.CurrentUsageCooldown;
+        private float GetUsageCooldown(Ability ability)
+        {
+            // TODO: Query correct timer depending on ability parameter
+            return AbilityUsageTimer.RemainingTime(Runner) ?? 0f;
+        }
     }
 }

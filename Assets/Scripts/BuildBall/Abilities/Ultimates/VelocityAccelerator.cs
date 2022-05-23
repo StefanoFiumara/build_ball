@@ -11,21 +11,21 @@ namespace BuildBall.Abilities.Ultimates
 
         [SerializeField] public float ThrowSpeedMultiplier;
 
-        protected override void AbilityStart(PlayerStats stats)
+        public override void AbilityStart(PlayerStats stats)
         {
-            stats.MovementSpeed *= MovementSpeedMultiplier;
-            stats.ThrowSpeed *= ThrowSpeedMultiplier;
+            stats.CurrentMovementSpeed = stats.MovementSpeed * MovementSpeedMultiplier;
+            stats.CurrentThrowSpeed = stats.ThrowSpeed * ThrowSpeedMultiplier;
         }
 
-        protected override void AbilityUpdate(PlayerStats stats)
+        public override void AbilityUpdate(PlayerStats stats)
         {
             // Do nothing
         }
 
-        protected override void AbilityEnd(PlayerStats stats)
+        public override void AbilityEnd(PlayerStats stats)
         {
-            stats.MovementSpeed /= MovementSpeedMultiplier;
-            stats.ThrowSpeed /= ThrowSpeedMultiplier;
+            stats.CurrentMovementSpeed = stats.MovementSpeed;
+            stats.CurrentThrowSpeed = stats.ThrowSpeed;
         }
     }
 }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace BuildBall.Player.Controllers
 {
+    // TODO: Turn into NetworkBehaviour
     public class BallController : MonoBehaviour
     {
         public BallMovement Ball;

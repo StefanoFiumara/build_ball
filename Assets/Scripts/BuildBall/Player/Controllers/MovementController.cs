@@ -15,7 +15,7 @@ namespace BuildBall.Player.Controllers
         public void Move(Vector2 direction, float deltaTime)
         {
             var moveDirection = new Vector3(direction.x, direction.y, 0f);
-            var moveDelta = moveDirection * _stats.MovementSpeed * deltaTime;
+            var moveDelta = moveDirection * _stats.CurrentMovementSpeed * deltaTime;
 
             transform.position += moveDelta;
         }

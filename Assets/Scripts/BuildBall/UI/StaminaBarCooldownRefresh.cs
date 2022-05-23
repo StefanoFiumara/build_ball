@@ -21,9 +21,9 @@ namespace BuildBall.UI
                 return;
             }
 
-            if (AbilityController.StandardAbility.IsUsageCooldownActive)
+            if (AbilityController.IsStandardUsageCooldownActive)
             {
-                _image.fillAmount = AbilityController.StandardAbility.GetUsageCooldownPercent();
+                _image.fillAmount = AbilityController.StandardUsageCooldownPercent;
             }
             else
             {

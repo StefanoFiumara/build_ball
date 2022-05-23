@@ -35,7 +35,7 @@ namespace BuildBall.UI
 
             ApplyCooldown();
 
-            if (_abilityController.GetUltimateCooldownPercent() < 1) {
+            if (_abilityController.UltimateUsageCooldownPercent < 1) {
                 CooldownTextOverlay.gameObject.SetActive(true);
             }
             else {
@@ -45,13 +45,13 @@ namespace BuildBall.UI
 
         public void ApplyCooldown()
         {
-            if (_abilityController.CurrentUsageCooldown() < 0.0f) {
+            if (_abilityController.UltimateUsageCooldown < 0.0f) {
                 CooldownTextOverlay.gameObject.SetActive(false);
                 CooldownImageOverlay.fillAmount = 0.0f;
             }
             else {
-                CooldownTextOverlay.text = Mathf.RoundToInt(_abilityController.CurrentUsageCooldown()).ToString();
-                CooldownImageOverlay.fillAmount = 1 - _abilityController.GetUltimateCooldownPercent();
+                CooldownTextOverlay.text = Mathf.RoundToInt(_abilityController.UltimateUsageCooldown).ToString();
+                CooldownImageOverlay.fillAmount = 1 - _abilityController.UltimateUsageCooldownPercent;
             }
         }
     }
