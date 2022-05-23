@@ -11,6 +11,8 @@ namespace BuildBall.Player.Controllers
         [Expandable] public Ability StandardAbility;
         [Expandable] public Ability UltimateAbility;
 
+        // TODO SF: Research if timer logic can be simplified with Networked Collections
+        // -> https://doc.photonengine.com/en-us/fusion/current/manual/network-collections
         [Networked] private TickTimer StandardAbilityDurationTimer { get; set; }
         [Networked] private TickTimer StandardAbilityUsageTimer { get; set; }
 
