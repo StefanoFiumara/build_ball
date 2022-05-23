@@ -1,85 +1,81 @@
 using BuildBall.Models;
+using Fusion;
 using UnityEngine;
 
 namespace BuildBall.Player.Controllers
 {
-    // TODO: Turn into NetworkBehaviour
-    public class BallController : MonoBehaviour
+    public class BallController : NetworkBehaviour
     {
-        public BallMovement Ball;
-        [SerializeField] private float ShotStrength;
-        private const float BallHoldXOffset = 0.5f;
-        private const float BallHoldYOffset = 0.5f;
-        private Vector3 _ballOffsetVector;
+        [Networked] private NetworkObject HeldBall { get; set; }
+
+        private readonly Vector3 _ballOffsetVector = new(0.5f, 0.5f);
 
         private PlayerStats _stats;
-
-        private void Start()
-        {
-            _ballOffsetVector = new Vector3(BallHoldXOffset, BallHoldYOffset);
-        }
 
         private void Awake()
         {
             _stats = GetComponent<PlayerStats>();
         }
 
-        private void Update()
+        public override void FixedUpdateNetwork()
         {
-            if (Ball != null)
+            if (HeldBall != null)
             {
-                Ball.transform.position = transform.position + _ballOffsetVector;
+                HeldBall.transform.position = transform.position + _ballOffsetVector;
             }
         }
 
-        public void ShootBall()
+        public void ShootBall(Vector2 direction)
         {
-            var playerHasBall = Ball != null;
+            var playerHasBall = HeldBall != null;
             if (!playerHasBall)
             {
                 return;
             }
 
-            Ball.Velocity = ShotStrength * _stats.ThrowSpeed;
-            Ball.TeamAffiliation = _stats.TeamAffiliation;
-            Ball.BallState = BallStateEnum.Moving;
-            Ball = null;
-
-            // TODO: adjust ball's travel direction based on Player's mouse position
+            HeldBall.GetComponent<BallMovementBehaviour>().SetThrownBy(_stats, direction);
+            HeldBall = null;
         }
 
         private void DropBall()
         {
-            Ball = null;
+            if (HeldBall != null)
+            {
+                Debug.Log("Dropping Ball");
+                HeldBall.GetComponent<BallMovementBehaviour>().SetStationary();
+                HeldBall = null;
+            }
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D col)
         {
-            var ball = other.GetComponent<BallMovement>();
+            var ball = col.GetComponent<BallMovementBehaviour>();
             if (ball == null)
             {
                 return;
             }
 
             if ((ball.BallState == BallStateEnum.Stationary || (ball.BallState == BallStateEnum.Moving && ball.TeamAffiliation == TeamAffiliationEnum.None))
-                && Ball == null
+                && HeldBall == null
                 && !_stats.IsInvulnerable)
             {
+
                 // Pick up the ball
-                Ball = ball;
-                Ball.BallState = BallStateEnum.Held;
+                HeldBall = ball.GetComponent<NetworkObject>();
+                ball.SetHeldBy(_stats);
+
+                Debug.Log($"Ball picked up by team {_stats.TeamAffiliation}");
+                Debug.Log($"HeldBall: {HeldBall.Id}");
+
             }
             else if (ball.BallState == BallStateEnum.Moving
                      && ball.TeamAffiliation != _stats.TeamAffiliation
                      && ball.TeamAffiliation != TeamAffiliationEnum.None
                      && !_stats.IsInvulnerable)
             {
+                // Artificially make the ball bounce off of the player, since this is a trigger physics won't intervene
+                ball.Bounce();
                 _stats.HealthPointLoss();
-
-                ball.TeamAffiliation = TeamAffiliationEnum.None;
-                ball.Direction = new Vector3(ball.Direction.x * -1, ball.Direction.y * -1, ball.Direction.z);
-                ball.Velocity *= 0.2f;
-
                 DropBall();
             }
         }

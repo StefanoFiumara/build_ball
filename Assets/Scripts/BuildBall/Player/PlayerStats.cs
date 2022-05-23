@@ -107,45 +107,18 @@ namespace BuildBall.Player
 
         private static void OnInvulnerableChanged(Changed<PlayerStats> changed)
         {
-            // TODO: Test this animation
             var renderer = changed.Behaviour.GetComponentInChildren<SpriteRenderer>();
 
             if (changed.Behaviour.IsInvulnerable)
             {
+                renderer.DOKill();
                 renderer.DOFade(0, 0.15f).SetLoops(-1, LoopType.Yoyo);
             }
             else
             {
+                renderer.DOKill();
                 renderer.DOFade(1, 0.05f);
             }
-
-
-        }
-        private IEnumerator BecomeTemporarilyInvulnerable()
-        {
-            const float invulnerabilityDeltaTime = 0.15f;
-
-            for (float i = 0; i < InvulnerabilitySecondsAfterHit; i += invulnerabilityDeltaTime)
-            {
-                // Alternate between 0 and 1 scale to simulate flashing
-                if (gameObject.transform.localScale == Vector3.one)
-                {
-                    ScaleModelTo(gameObject, Vector3.zero);
-                }
-                else
-                {
-                    ScaleModelTo(gameObject, Vector3.one);
-                }
-
-                yield return new WaitForSeconds(invulnerabilityDeltaTime);
-            }
-
-            ScaleModelTo(gameObject, Vector3.one);
-        }
-
-        private void ScaleModelTo(GameObject theGameObject, Vector3 scale)
-        {
-            theGameObject.transform.localScale = scale;
         }
     }
 }

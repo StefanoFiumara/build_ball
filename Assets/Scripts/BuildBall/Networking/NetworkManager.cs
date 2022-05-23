@@ -11,12 +11,20 @@ namespace BuildBall.Networking
 {
     public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     {
-        private readonly Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
+        [SerializeField]
+        private NetworkObject CharacterPrefab;
+
+        [SerializeField]
+        private NetworkObject BallPrefab;
 
         private NetworkRunner _runner;
 
-        [SerializeField]
-        private NetworkObject CharacterPrefab;
+        private readonly Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
+        private readonly Dictionary<PlayerRef, NetworkObject> _spawnedBalls = new();
+
+        private bool _shootPressed;
+        private bool _standardAbilityPressed;
+        private bool _ultimateAbilityPressed;
 
         private void Awake()
         {
@@ -32,6 +40,14 @@ namespace BuildBall.Networking
             {
                 JoinOrHostGame();
             }
+        }
+
+        public void Update()
+        {
+            // Sample for one-time key pressed here, to make sure quick inputs are not missed.
+            _shootPressed |= Input.GetMouseButton(0);
+            _standardAbilityPressed |= Input.GetKey(KeyCode.LeftShift);
+            _ultimateAbilityPressed |= Input.GetKey(KeyCode.R);
         }
 
         private async void JoinOrHostGame()
@@ -51,39 +67,41 @@ namespace BuildBall.Networking
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
             // TODO: Spawn positions based on team affiliation
-            var spawnPosition = Vector3.right * 3 * _spawnedCharacters.Values.Count;
-            Debug.Log($"Player Id: {player.PlayerId}, Raw Encoded: {player.RawEncoded}");
-            void OnBeforeSpawned(NetworkRunner r, NetworkObject o)
+            var spawnPosition = Vector3.left + Vector3.right * 6 * _spawnedCharacters.Values.Count;
+
+            void OnBeforePlayerSpawned(NetworkRunner r, NetworkObject o)
             {
-                o.GetComponent<PlayerStats>().Init(TeamAffiliationEnum.TeamA);
+                var team = _spawnedCharacters.Count % 2 == 0 ? TeamAffiliationEnum.TeamA : TeamAffiliationEnum.TeamB;
+                o.GetComponent<PlayerStats>().Init(team);
             }
 
-            var networkPlayerObject = runner.Spawn(CharacterPrefab, spawnPosition, Quaternion.identity, player, OnBeforeSpawned);
+            void OnBeforeBallSpawned(NetworkRunner r, NetworkObject o)
+            {
+                o.GetComponent<BallMovementBehaviour>().SetStationary();
+            }
+
+            var networkPlayerObject = runner.Spawn(CharacterPrefab, spawnPosition, Quaternion.identity, player, OnBeforePlayerSpawned);
+            var networkBallObject = runner.Spawn(BallPrefab, spawnPosition + 2*Vector3.right, Quaternion.identity, null, OnBeforeBallSpawned);
 
             // Keep track of the player avatars so we can remove it when they disconnect
             _spawnedCharacters.Add(player, networkPlayerObject);
+            _spawnedBalls.Add(player, networkBallObject);
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
             // Find and remove the players avatar
-            if (_spawnedCharacters.TryGetValue(player, out var networkObject))
+            if (_spawnedCharacters.TryGetValue(player, out var playerObject))
             {
-                runner.Despawn(networkObject);
+                runner.Despawn(playerObject);
                 _spawnedCharacters.Remove(player);
             }
-        }
 
-        private bool _shootPressed;
-        private bool _standardAbilityPressed;
-        private bool _ultimateAbilityPressed;
-
-        public void Update()
-        {
-            // Sample for one-time key pressed here, to make sure quick inputs are not missed.
-            _shootPressed |= Input.GetMouseButton(0);
-            _standardAbilityPressed |= Input.GetKey(KeyCode.LeftShift);
-            _ultimateAbilityPressed |= Input.GetKey(KeyCode.R);
+            if (_spawnedBalls.TryGetValue(player, out var ballObject))
+            {
+                runner.Despawn(ballObject);
+                _spawnedBalls.Remove(player);
+            }
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -91,22 +109,10 @@ namespace BuildBall.Networking
             var data = new NetworkInputData();
 
             data.MoveDirection = GetMovementDirection();
-            if (_shootPressed)
-            {
-                data.IsShootPressed = true;
-            }
 
-            if (_standardAbilityPressed)
-            {
-                data.IsStandardAbilityPressed = true;
-
-            }
-
-            if (_ultimateAbilityPressed)
-            {
-                data.IsUltimateAbilityPressed = true;
-
-            }
+            data.IsShootPressed = _shootPressed;
+            data.IsStandardAbilityPressed = _standardAbilityPressed;
+            data.IsUltimateAbilityPressed = _ultimateAbilityPressed;
 
             _shootPressed = false;
             _standardAbilityPressed = false;
@@ -114,21 +120,6 @@ namespace BuildBall.Networking
 
             input.Set(data);
         }
-
-
-        public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-        public void OnConnectedToServer(NetworkRunner runner) { }
-        public void OnDisconnectedFromServer(NetworkRunner runner) { }
-        public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
-        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
-        public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
-        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
-        public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
-        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-        public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
-        public void OnSceneLoadDone(NetworkRunner runner) { }
-        public void OnSceneLoadStart(NetworkRunner runner) { }
 
         private Vector2 GetMovementDirection()
         {
@@ -141,5 +132,20 @@ namespace BuildBall.Networking
 
             return direction.normalized;
         }
+
+        public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
+        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+        // ReSharper disable once Unity.IncorrectMethodSignature
+        public void OnConnectedToServer(NetworkRunner runner) { }
+        public void OnDisconnectedFromServer(NetworkRunner runner) { }
+        public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
+        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
+        public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
+        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
+        public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
+        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
+        public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
+        public void OnSceneLoadDone(NetworkRunner runner) { }
+        public void OnSceneLoadStart(NetworkRunner runner) { }
     }
 }

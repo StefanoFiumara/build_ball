@@ -64,7 +64,8 @@ namespace BuildBall.Player.Controllers
                 // Shooting
                 if (input.IsShootPressed)
                 {
-                    _ballController.ShootBall();
+                    // TODO: adjust ball's travel direction based on Player's mouse position
+                    _ballController.ShootBall(Vector2.right);
                 }
 
                 // Standard Ability
